@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/url"
 	"os"
-	"slices"
+	"sort"
 	"strings"
 )
 
@@ -38,7 +38,7 @@ func extractPlaceholders(ws []wordlist) []string {
 	// Sort placeholders from longest to shortest. This will be used
 	// for replacement order later; it ensures, that no parts of longer
 	// placeholders are replaced by shorter ones.
-	slices.SortFunc(placeholders, func(a, b string) int { return len(b) - len(a) })
+	sort.Slice(placeholders, func(i, j int) bool { return len(placeholders[i]) > len(placeholders[j]) })
 
 	return placeholders
 }
