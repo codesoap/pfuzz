@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/url"
 	"os"
 	"strings"
 )
@@ -25,7 +24,7 @@ type multiStringFlag []string
 func (i multiStringFlag) String() string      { return strings.Join(i, ", ") }
 func (i *multiStringFlag) Set(s string) error { *i = append(*i, s); return nil }
 
-func parseFlags() ([]wordlist, *url.URL, multiStringFlag, string, string) {
+func parseFlags() ([]wordlist, string, multiStringFlag, string, string) {
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 		flag.PrintDefaults()
@@ -47,9 +46,8 @@ func parseFlags() ([]wordlist, *url.URL, multiStringFlag, string, string) {
 	flag.Parse()
 
 	wordlists := parseWordlists(rawWordlists)
-	u := parseURL(rawURL)
 	checkHeaders(headers)
-	return wordlists, u, headers, data, method
+	return wordlists, rawURL, headers, data, method
 }
 
 func checkHeaders(headers []string) {
@@ -121,20 +119,4 @@ func moveStdinToFront(wordlists []wordlist) []wordlist {
 		}
 	}
 	return wordlists
-}
-
-func parseURL(rawURL string) *url.URL {
-	if len(rawURL) == 0 {
-		fmt.Fprintln(os.Stderr, "Error: URL is missing.")
-		os.Exit(1)
-	}
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error: URL could not be parsed:", err)
-		os.Exit(1)
-	} else if u.Scheme != "http" && u.Scheme != "https" {
-		fmt.Fprintf(os.Stderr, "Error: Unknown URL scheme '%s'. Use 'http' or 'https'.\n", u.Scheme)
-		os.Exit(1)
-	}
-	return u
 }

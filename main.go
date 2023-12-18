@@ -43,11 +43,9 @@ func extractPlaceholders(ws []wordlist) []string {
 	return placeholders
 }
 
-func usedPlaceholders(placeholders []string, u *url.URL, headers []string, data string) []string {
+func usedPlaceholders(placeholders []string, u string, headers []string, data string) []string {
 	// tmp is a combination of all parts that can contain placeholders.
-	tmp := u.Hostname() + "\n" +
-		u.RequestURI() + "\n" +
-		data + "\n"
+	tmp := u + "\n" + data + "\n"
 	for _, header := range headers {
 		tmp += header + "\n"
 	}
@@ -114,9 +112,10 @@ func permutate(wordlists []wordlist, permutations chan map[string]string) {
 	}
 }
 
-func toOutLine(u *url.URL, headers []string, data, method string, ps []string, pvs map[string]string) string {
+func toOutLine(rawURL string, headers []string, data, method string, ps []string, pvs map[string]string) string {
 	j := make(map[string]any)
-	j["host"] = doReplacements(u.Hostname(), ps, pvs)
+	u := parseURL(doReplacements(rawURL, ps, pvs))
+	j["host"] = u.Hostname()
 	if u.Port() != "" {
 		j["port"] = u.Port()
 	}
@@ -130,13 +129,29 @@ func toOutLine(u *url.URL, headers []string, data, method string, ps []string, p
 	return string(b)
 }
 
+func parseURL(rawURL string) *url.URL {
+	if len(rawURL) == 0 {
+		fmt.Fprintln(os.Stderr, "Error: URL is missing.")
+		os.Exit(1)
+	}
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error: URL '%s' could not be parsed:", rawURL, err)
+		os.Exit(1)
+	} else if u.Scheme != "http" && u.Scheme != "https" {
+		fmt.Fprintf(os.Stderr, "Error: Unknown URL scheme '%s' in URL '%s'. Use 'http' or 'https'.\n", u.Scheme, rawURL)
+		os.Exit(1)
+	}
+	return u
+}
+
 func toRequest(u *url.URL, headers []string, data, method string, ps []string, pvs map[string]string) string {
 	var req strings.Builder
-	fmt.Fprintf(&req, "%s %s HTTP/1.1\r\n", method, doReplacements(u.RequestURI(), ps, pvs))
+	fmt.Fprintf(&req, "%s %s HTTP/1.1\r\n", method, u.RequestURI())
 	if u.Port() == "" {
-		fmt.Fprintf(&req, "Host: %s\r\n", doReplacements(u.Hostname(), ps, pvs))
+		fmt.Fprintf(&req, "Host: %s\r\n", u.Hostname())
 	} else {
-		fmt.Fprintf(&req, "Host: %s:%s\r\n", doReplacements(u.Hostname(), ps, pvs), u.Port())
+		fmt.Fprintf(&req, "Host: %s:%s\r\n", u.Hostname(), u.Port())
 	}
 	for _, header := range headers {
 		fmt.Fprintf(&req, "%s\r\n", doReplacements(header, ps, pvs))
