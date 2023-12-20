@@ -39,7 +39,7 @@ func parseFlags() ([]wordlist, string, multiStringFlag, string, string) {
 	flag.Var(&rawWordlists, "w", "The path to a wordlist, and optionally a "+
 		"colon followed\nby a custom placeholder, e.g. '/path/to/username/list:USER'.")
 	flag.StringVar(&rawURL, "u", "", "The URL of the target.")
-	flag.Var(&headers, "H", "A HTTP header to use, e.g. 'Content-Type: application/json'.")
+	flag.Var(&headers, "H", "An HTTP header to use, e.g. 'Content-Type: application/json'.")
 	flag.StringVar(&data, "d", "", "Payload data as given, without any encoding. "+
 		"\nMostly used for POST requests.")
 	flag.StringVar(&method, "X", "GET", "The HTTP method to use.")

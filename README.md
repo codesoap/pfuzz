@@ -31,7 +31,7 @@ $ pfuzz -w /path/to/subdomains:SUB -w /path/to/paths:PATH -u http://SUB.foo.io/P
 $ pfuzz -h
 Usage of pfuzz:
   -H value
-        A HTTP header to use, e.g. 'Content-Type: application/json'.
+        An HTTP header to use, e.g. 'Content-Type: application/json'.
   -X string
         The HTTP method to use. (default "GET")
   -d string
