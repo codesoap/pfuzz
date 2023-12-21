@@ -142,7 +142,7 @@ func parseURL(rawURL string) *url.URL {
 	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error: URL '%s' could not be parsed:", rawURL, err)
+		fmt.Fprintf(os.Stderr, "Error: URL '%s' could not be parsed: %v\n", rawURL, err)
 		os.Exit(1)
 	} else if u.Scheme != "http" && u.Scheme != "https" {
 		fmt.Fprintf(os.Stderr, "Error: Unknown URL scheme '%s' in URL '%s'. Use 'http' or 'https'.\n", u.Scheme, rawURL)
