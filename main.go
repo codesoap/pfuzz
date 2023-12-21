@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -117,7 +118,12 @@ func toOutLine(rawURL string, headers []string, data, method string, ps []string
 	u := parseURL(doReplacements(rawURL, ps, pvs))
 	j["host"] = u.Hostname()
 	if u.Port() != "" {
-		j["port"] = u.Port()
+		var err error
+		j["port"], err = strconv.Atoi(u.Port())
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: Could not parse port '%s': %v\n", u.Port(), err)
+			os.Exit(1)
+		}
 	}
 	j["tls"] = u.Scheme == "https"
 	j["req"] = toRequest(u, headers, data, method, ps, pvs)
