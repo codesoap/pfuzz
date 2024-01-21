@@ -26,6 +26,11 @@ $ pfuzz -w /path/to/subdomains:SUB -w /path/to/paths:PATH -u http://SUB.foo.io/P
 ...
 ```
 
+# Installation
+You can download precompiled binaries from the [releases
+page](https://github.com/codesoap/pfuzz/releases) or install it with
+`go install github.com/codesoap/pfuzz@latest`.
+
 # Usage
 ```console
 $ pfuzz -h
