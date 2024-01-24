@@ -17,7 +17,7 @@ $ generate-tokens | pfuzz -w - -u http://foo.io -H 'Authorization: Bearer FUZZ'
 {"host":"foo.io","req":"GET / HTTP/1.1\r\nHost: foo.io\r\nAuthorization: Bearer xyz1337\r\n\r\n","tls":false}
 ...
 
-$ # Using multiple wordlists to fuzz paths accross multiple subdomains:
+$ # Using multiple wordlists to fuzz paths across multiple subdomains:
 $ pfuzz -w /path/to/subdomains:SUB -w /path/to/paths:PATH -u http://SUB.foo.io/PATH
 {"host":"doc.foo.io","req":"GET /api HTTP/1.1\r\nHost: doc.foo.io\r\n\r\n","tls":false}
 {"host":"doc.foo.io","req":"GET /login HTTP/1.1\r\nHost: doc.foo.io\r\n\r\n","tls":false}
