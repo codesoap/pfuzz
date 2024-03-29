@@ -58,7 +58,3 @@ standard input.
 
 If no wordlist is used, only one request will be generated.
 ```
-
-# TODO
-- Maybe allow overwriting the generated `Host` header.
-- Maybe allow overwriting the generated `Content-Length` header.
